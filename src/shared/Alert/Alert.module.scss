@@ -7,4 +7,20 @@
   border: 1px solid #ccc;
   z-index: 1000;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert__button {
+  display: flex;
+  align-self: end;
+}
+
+.success {
+  background-color: rgb(65, 168, 65);
+}
+
+.error {
+  background-color: rgb(189, 68, 68);
 }

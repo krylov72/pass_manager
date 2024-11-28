@@ -29,7 +29,7 @@
   background-image: url(../../assets/bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-  opacity: 0.2; /* Установите желаемую прозрачность здесь */
-  z-index: -1; /* Поместите за основной контент */
-  border-radius: inherit; /* Наследуем радиус углов */
+  opacity: 0.2;
+  z-index: -1;
+  border-radius: inherit;
 }
