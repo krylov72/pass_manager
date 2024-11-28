@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main 
   workflow_dispatch:
 
 permissions:
@@ -11,35 +12,59 @@ permissions:
   id-token: write
 
 concurrency:
-  group: 'pages'
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Node
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18 # Или ваша необходимая версия Node.js
-          cache: 'pnpm'
+          node-version: 18 # Используйте LTS версию Node.js
+          cache: pnpm
+
       - name: Install pnpm
-        run: npm install -g pnpm@latest #Устанавливаем pnpm глобально
+        run: npm install -g pnpm@8.6.3 # Или другая стабильная версия
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(pnpm config get cache-folder)"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
       - name: Build
         run: pnpm run build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-          path: ./dist
+          name: dist
+
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: Clean before deploy
+          clean_before_deploy: true # Если необходимо очищать перед каждым деплоем
+
+      - name: Post deploy message
+        if: success()
+        run: echo "Deployment successful. Check your GitHub Pages site: ${{ steps.deploy.outputs.page_url }}"
+      - name: Post deploy error message
+        if: failure()
+        run: echo "Deployment failed. Check the logs for details."
