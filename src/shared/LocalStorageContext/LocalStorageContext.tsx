@@ -20,7 +20,7 @@ export const useLocalStorage = (): LocalStorageContextType | null => {
     return null
   }
 
-  return context // Теперь context гарантированно не undefined
+  return context
 }
 
 export const LocalStorageProvider = ({ children }: PropsWithChildren) => {
