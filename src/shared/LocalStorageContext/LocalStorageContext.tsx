@@ -7,16 +7,20 @@ import {
 } from 'react'
 import { FormCommonType, LocalStorageContextType } from 'src/types'
 
-const LocalStorageContext = createContext<LocalStorageContextType | undefined>(
-  undefined
-)
+const LocalStorageContext = createContext<LocalStorageContextType | null>(null)
 
 //Решение приходило очень долго, потому что логика реализована таким образом:
 //Пароль сетается в другой компоненте, а передавать пропсы из низа наверх и потом опять вниз не лучший выход, лишний код
 //Если будет необходимо, реализую через пропсы
 
-export const useLocalStorage = () => {
-  return useContext(LocalStorageContext)
+export const useLocalStorage = (): LocalStorageContextType | null => {
+  const context = useContext(LocalStorageContext)
+
+  if (!context) {
+    return null
+  }
+
+  return context // Теперь context гарантированно не undefined
 }
 
 export const LocalStorageProvider = ({ children }: PropsWithChildren) => {

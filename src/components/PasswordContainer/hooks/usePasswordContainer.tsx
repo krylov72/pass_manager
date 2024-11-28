@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { AlertType } from 'src/types'
 
 export const usePasswordContainer = () => {
-  const { items, removeItem } = useLocalStorage()
+  const localStorageItems = useLocalStorage()
   const [currentPage, setCurrentPage] = useState(1)
   const [isAlert, setIsAlert] = useState<AlertType>({
     isShow: false,
@@ -14,10 +14,11 @@ export const usePasswordContainer = () => {
   const [filterText, setFilterText] = useState('')
   const [totalPages, setTotalPages] = useState(1)
 
-  const filteredItems = items.filter(([service]: [string, string]) => {
-    //Исправил типизацию
-    return service.toLowerCase().includes(filterText.toLowerCase())
-  })
+  const filteredItems = localStorageItems?.items.filter(
+    ([service]: [string, string]) => {
+      return service.toLowerCase().includes(filterText.toLowerCase())
+    }
+  )
 
   const copyToClipboard = (el: string) => {
     navigator.clipboard.writeText(el)
@@ -32,7 +33,7 @@ export const usePasswordContainer = () => {
     const response = await simulationApiRequest()
     try {
       if (response) {
-        removeItem(key)
+        localStorageItems?.removeItem(key)
         setIsAlert({
           isShow: true,
           message: 'Контейнер успешно удалён!',
@@ -54,12 +55,14 @@ export const usePasswordContainer = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem)
+  const currentItems = filteredItems?.slice(indexOfFirstItem, indexOfLastItem)
 
   useEffect(() => {
-    const newTotalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1
-    setTotalPages(newTotalPages)
-    setCurrentPage(Math.min(currentPage, newTotalPages) || 1)
+    if (filteredItems) {
+      const newTotalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1
+      setTotalPages(newTotalPages)
+      setCurrentPage(Math.min(currentPage, newTotalPages) || 1)
+    }
   }, [filteredItems, itemsPerPage, currentPage])
 
   const handleNextPage = () => {

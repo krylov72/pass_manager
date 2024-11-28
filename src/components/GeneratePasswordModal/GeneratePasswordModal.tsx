@@ -10,12 +10,8 @@ type Props = {
   closeModal: () => void
 }
 export const GeneratePasswordModal = ({ throwPassword, closeModal }: Props) => {
-  const {
-    methods,
-
-    isCustomCharsSelected,
-    isOptionSelected,
-  } = useGeneratePassword()
+  const { methods, isCustomCharsSelected, isOptionSelected } =
+    useGeneratePassword()
 
   const {
     control,
@@ -68,8 +64,9 @@ export const GeneratePasswordModal = ({ throwPassword, closeModal }: Props) => {
                 Использовать буквы?
                 <input
                   type='checkbox'
-                  {...field}
+                  {...{ ...field, value: undefined }}
                   disabled={isCustomCharsSelected}
+                  checked={false}
                 />
               </label>
             </div>
@@ -85,7 +82,7 @@ export const GeneratePasswordModal = ({ throwPassword, closeModal }: Props) => {
                 Использовать числа?
                 <input
                   type='checkbox'
-                  {...field}
+                  {...{ ...field, value: undefined }}
                   disabled={isCustomCharsSelected}
                 />
               </label>
@@ -102,7 +99,7 @@ export const GeneratePasswordModal = ({ throwPassword, closeModal }: Props) => {
                 Использовать символы?
                 <input
                   type='checkbox'
-                  {...field}
+                  {...{ ...field, value: undefined }}
                   disabled={isCustomCharsSelected}
                 />
               </label>

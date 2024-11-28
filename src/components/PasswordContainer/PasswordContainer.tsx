@@ -45,7 +45,7 @@ export const PasswordContainer = () => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((el: [string, string]) => (
+          {currentItems?.map((el: [string, string]) => (
             <tr key={el[0]}>
               <td>{el[0]}</td>
               <td

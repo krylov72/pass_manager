@@ -13,7 +13,7 @@ export const useAddPassword = () => {
     mode: 'onChange',
   })
 
-  const { addItem } = useLocalStorage()
+  const localStorageData = useLocalStorage()
 
   const [showGenerateModal, setShowGenerateModal] = useState(false)
   const [isAlert, setIsAlert] = useState<AlertType>({
@@ -33,7 +33,7 @@ export const useAddPassword = () => {
     const response = await simulationApiRequest()
     try {
       if (response) {
-        addItem(data)
+        localStorageData?.addItem(data)
         setIsAlert({
           isShow: true,
           message: 'Контейнер успешно сохранен!',
@@ -52,7 +52,6 @@ export const useAddPassword = () => {
     }
   }
   return {
-    addItem,
     handlePasswordThrower,
     isAlert,
     isName,
