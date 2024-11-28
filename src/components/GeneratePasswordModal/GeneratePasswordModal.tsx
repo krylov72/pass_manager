@@ -1,8 +1,9 @@
-import { Controller, useForm } from 'react-hook-form'
-import { GeneratePassForm } from '../../types/types'
-import { GeneratePassword } from '../../utils/GeneratePassword'
+import { GeneratePassForm } from 'src/types'
 import s from './GeneratePasswordModal.module.scss'
-import Button from '../../shared/Button/Button'
+import { useGeneratePassword } from './hooks'
+import { GeneratePassword } from '@utils/GeneratePassword'
+import { Controller } from 'react-hook-form'
+import { Button } from '@shared/Button'
 
 type Props = {
   throwPassword: (password: string) => void
@@ -10,30 +11,17 @@ type Props = {
 }
 export const GeneratePasswordModal = ({ throwPassword, closeModal }: Props) => {
   const {
+    methods,
+
+    isCustomCharsSelected,
+    isOptionSelected,
+  } = useGeneratePassword()
+
+  const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<GeneratePassForm>({
-    defaultValues: {
-      length: 4,
-      useLetters: false,
-      useNumbers: false,
-      useSymbols: false,
-      Case: 'random',
-      customChars: '',
-    },
-    mode: 'onChange',
-  })
-
-  const customChars = watch('customChars')
-  const useNumbers = watch('useNumbers')
-  const useLetters = watch('useLetters')
-  const useSymbols = watch('useSymbols')
-  const isOptionSelected =
-    !useNumbers && !useLetters && !useSymbols && !customChars
-  const isCustomCharsSelected = customChars.length > 0
-
+  } = methods
   const onFormSubmit = (data: GeneratePassForm) => {
     const password = GeneratePassword(data)
     throwPassword(password)
