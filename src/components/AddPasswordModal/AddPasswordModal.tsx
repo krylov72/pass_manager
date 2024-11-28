@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import { FormCommontype } from '../../types/types'
-import { Controller, useForm } from 'react-hook-form'
-import s from './AddPasswordModal.module.scss'
-import { simulationApiRequest } from '../../utils/simulationApiRequest'
-import { localStorageHelper } from '../../utils/localStorageHelper'
-import { GeneratePasswordModal } from '../GeneratePasswordModal/GeneratePasswordModal'
-import Button from '../../shared/Button/Button'
+import { useState } from "react";
+import { FormCommontype } from "../../types/types";
+import { Controller, useForm } from "react-hook-form";
+import s from "./AddPasswordModal.module.scss";
+import { simulationApiRequest } from "../../utils/simulationApiRequest";
+import { localStorageHelper } from "../../utils/localStorageHelper";
+import { GeneratePasswordModal } from "../GeneratePasswordModal/GeneratePasswordModal";
+import Button from "../../shared/Button/Button";
+import { Alert } from "../../shared/Alert/Alert";
 
 export const AddPasswordModal = () => {
   const {
@@ -17,53 +18,55 @@ export const AddPasswordModal = () => {
     reset,
   } = useForm<FormCommontype>({
     defaultValues: {
-      password: '',
-      service: '',
+      password: "",
+      service: "",
     },
-    mode: 'onChange',
-  })
+    mode: "onChange",
+  });
 
-  const [showGenerateModal, setShowGenerateModal] = useState(false)
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const isPassword = watch('password')
-  const isName = watch('service')
+  const isPassword = watch("password");
+  const isName = watch("service");
 
   const handlePasswordThrower = (password: string) => {
-    setValue('password', password)
-  }
+    setValue("password", password);
+  };
 
   const onFormSubmit = async (data: FormCommontype) => {
-    const response = await simulationApiRequest()
+    const response = await simulationApiRequest();
     try {
       if (response) {
-        localStorageHelper.set(data)
-        reset()
+        localStorageHelper.set(data);
+
+        reset();
       } else {
-        alert('Контейнер не добавлен, попробуйте ещё раз')
+        setShowAlert(!showAlert);
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
 
   return (
     <div className={s.container}>
       <form className={s.form_container} onSubmit={handleSubmit(onFormSubmit)}>
         <Controller
-          name='service'
+          name="service"
           control={control}
-          rules={{ required: { value: true, message: 'Name is required' } }}
+          rules={{ required: { value: true, message: "Name is required" } }}
           render={({ field }) => (
             <div className={s.input__wrapper}>
               <input
                 className={s.form__input}
-                autoComplete='off'
-                type='text'
-                id='service'
+                autoComplete="off"
+                type="text"
+                id="service"
                 required
                 {...field}
               />
-              <label className={s.form__label} htmlFor='service'>
+              <label className={s.form__label} htmlFor="service">
                 Имя сервиса
               </label>
               {errors.service && (
@@ -73,21 +76,21 @@ export const AddPasswordModal = () => {
           )}
         />
         <Controller
-          name='password'
+          name="password"
           control={control}
-          rules={{ required: { value: true, message: 'Password is required' } }}
+          rules={{ required: { value: true, message: "Password is required" } }}
           render={({ field }) => (
             <div className={s.input__wrapper}>
               <input
                 className={s.form__input}
-                type='text'
+                type="text"
                 {...field}
-                id='password'
+                id="password"
                 required
                 disabled={showGenerateModal}
-                autoComplete='off'
+                autoComplete="off"
               />
-              <label className={s.form__label} htmlFor='password'>
+              <label className={s.form__label} htmlFor="password">
                 Пароль
               </label>
               {errors.password && (
@@ -98,25 +101,32 @@ export const AddPasswordModal = () => {
         />
         <div className={s.buttons_container}>
           <Button
-            type='button'
+            type="button"
             onClick={() => setShowGenerateModal(!showGenerateModal)}
           >
             Генерировать пароль
           </Button>
-          <Button type='submit' disabled={!isName || !isPassword}>
+          <Button type="submit" disabled={!isName || !isPassword}>
             Сохранить
           </Button>
         </div>
       </form>
 
+      {showAlert && (
+        <Alert
+          message="Внутрення ошибка, попробуйте ещё раз"
+          onClose={() => setShowAlert(!showAlert)}
+        />
+      )}
+
       {showGenerateModal && (
         <GeneratePasswordModal
           throwPassword={handlePasswordThrower}
           closeModal={() => {
-            setShowGenerateModal(!showGenerateModal)
+            setShowGenerateModal(!showGenerateModal);
           }}
         />
       )}
     </div>
-  )
-}
+  );
+};
