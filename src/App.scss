@@ -1,0 +1,8 @@
+@use './styles/boilerplate';
+
+.page {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
