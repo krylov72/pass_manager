@@ -1,4 +1,4 @@
-import { GeneratePassForm } from '../types/types'
+import { GeneratePassForm } from 'src/types'
 
 export const GeneratePassword = (conditions: GeneratePassForm) => {
   let canUse = ''
